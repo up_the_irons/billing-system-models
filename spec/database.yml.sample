@@ -1,0 +1,4 @@
+adapter: mysql
+database: billing_system_test
+username: test
+password: test
