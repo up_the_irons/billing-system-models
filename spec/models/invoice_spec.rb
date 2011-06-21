@@ -16,7 +16,7 @@ context "Invoice class" do
       invoice.total.should == 0
     end
     specify "should be sum of all line items" do
-      invoice = Factory(:invoice, 
+      invoice = Factory(:invoice,
                         :line_items => [Factory(:line_item, :amount => 5.00),
                                         Factory(:line_item, :amount => 7.00)])
       invoice.total.should == 12.00
@@ -40,9 +40,9 @@ context "Invoice class" do
     context "should be zero if invoice paid in full" do
       specify "with one payment" do
         invoice = Factory.build(:invoice,
-                                :line_items => [Factory(:line_item, 
+                                :line_items => [Factory(:line_item,
                                                         :amount => 5.00)])
-        Factory(:invoices_payment, 
+        Factory(:invoices_payment,
                 :invoice => invoice,
                 :payment => Factory.build(:payment, :amount => 5.00))
 
@@ -50,11 +50,11 @@ context "Invoice class" do
       end
       specify "with multiple payments" do
         invoice = Factory.build(:invoice,
-                                :line_items => [Factory(:line_item, 
+                                :line_items => [Factory(:line_item,
                                                         :amount => 5.00),
                                                 Factory(:line_item,
                                                         :amount => 7.00)])
-        Factory(:invoices_payment, 
+        Factory(:invoices_payment,
                 :invoice => invoice,
                 :payment => Factory.build(:payment, :amount => 12.00))
 
@@ -66,9 +66,9 @@ context "Invoice class" do
   context "paid in full" do
     before do
       @invoice = Factory.build(:invoice,
-                               :line_items => [Factory(:line_item, 
+                               :line_items => [Factory(:line_item,
                                                        :amount => 5.00)])
-      Factory(:invoices_payment, 
+      Factory(:invoices_payment,
               :invoice => @invoice,
               :payment => Factory.build(:payment, :amount => 5.00))
 

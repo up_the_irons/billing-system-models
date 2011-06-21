@@ -104,7 +104,7 @@ context "CreditCard class with fixtures loaded" do
     specify "should not call gateway to charge credit card if Charge record not saved" do
       charge_rec = Charge.new
       @cc.charges.stub!(:create).and_return(Charge.new)
-      
+
       charge_rec.new_record?.should == true
       $GATEWAY.should_not_receive(:purchase)
 

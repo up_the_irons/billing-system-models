@@ -1,7 +1,7 @@
 # Fill these in
 live:
-  api_login: 
-  api_password: 
+  api_login:
+  api_password:
   api_key_filename: my_paypal.pem
 
   # Change below to 'true' to go live, otherwise the 'test' credentials are
@@ -9,6 +9,6 @@ live:
   enabled: false
 
 test:
-  api_login: 
-  api_password: 
+  api_login:
+  api_password:
   api_signature:

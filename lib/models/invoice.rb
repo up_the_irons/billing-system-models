@@ -5,13 +5,13 @@ class Invoice < ActiveRecord::Base
   has_many :payments, :through => :invoices_payments
 
   def total
-    line_items.inject(0) do |sum, li| 
+    line_items.inject(0) do |sum, li|
       sum + li.amount
     end
   end
 
   def paid
-    payments.inject(0) do |sum, p| 
+    payments.inject(0) do |sum, p|
       sum + p.amount
     end
   end
