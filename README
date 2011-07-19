@@ -49,7 +49,7 @@ Then run the migrations under ``db/migrate``.
 Lastly,
 
 Copy ``lib/gateway.yml.example`` to ``lib/gateway.yml`` and fill in the
-fields in that file.  
+fields in that file.
 
 Put your API key file in ``lib/`` and tell ``lib/gateway.yml`` about it
 using the "api_key_filename" parameter.  In the example file, the API
