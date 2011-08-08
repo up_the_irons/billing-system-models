@@ -5,7 +5,6 @@ class CreditCard < ActiveRecord::Base
   validates_presence_of :number
   validates_presence_of :month
   validates_presence_of :year
-  validates_presence_of :cvv
   validates_presence_of :first_name
   validates_presence_of :last_name
 

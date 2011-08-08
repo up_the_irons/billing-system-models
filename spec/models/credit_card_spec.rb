@@ -16,7 +16,6 @@ context "CreditCard class with fixtures loaded" do
       :number     => @number,
       :month      => @month,
       :year       => @year,
-      :cvv        => @cvv,
       :first_name => @first_name,
       :last_name  => @last_name
     )

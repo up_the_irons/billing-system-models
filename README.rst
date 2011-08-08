@@ -51,6 +51,10 @@ Lastly,
 Copy ``lib/gateway.yml.example`` to ``lib/gateway.yml`` and fill in the
 fields in that file.
 
+Put your API key file in ``lib/`` and tell ``lib/gateway.yml`` about it
+using the "api_key_filename" parameter.  In the example file, the API
+key file is named ``my_paypal.pem``
+
 There is one block for the "live" environment, where real credit cards are
 charged, and one block for the "test" environment, which mocks everything
 through PayPal's Sandbox and no real money is exchanged.
