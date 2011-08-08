@@ -26,7 +26,7 @@ The models included are:
 
 Supported processors:
 
-  * PayPal (Business or Premier account required)
+* PayPal (Business or Premier account required)
 
 Requirements
 ------------
