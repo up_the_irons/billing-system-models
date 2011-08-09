@@ -41,7 +41,7 @@ Installation
 
 ::
 
-  cd vendors/plugins/
+  cd vendor/plugins/
   git clone git@github.com:up_the_irons/billing-system-models.git
 
 Then run the migrations under ``db/migrate``.
