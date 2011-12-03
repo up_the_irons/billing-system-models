@@ -8,6 +8,8 @@ class CreditCard < ActiveRecord::Base
   validates_presence_of :first_name
   validates_presence_of :last_name
 
+  attr_accessor :cvv
+
   private
 
   def charge(amount)

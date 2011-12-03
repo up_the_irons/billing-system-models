@@ -3,10 +3,10 @@ require File.dirname(__FILE__) + '/../spec_helper'
 context "CreditCard class with fixtures loaded" do
 
   before :each do
-    @number = 4111111111111111
+    @number = "encrypted data"
     @month  = "01"
     @year   = "2018"
-    @cvv    = "999"
+    @cvv    = 999
     @first_name = "John"
     @last_name  = "Doe"
 
