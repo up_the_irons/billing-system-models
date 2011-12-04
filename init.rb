@@ -11,10 +11,17 @@ end
 
 require 'active_merchant'
 
+$:.unshift File.join(File.dirname(__FILE__), "lib")
+
 # Gateway configuration
 # ---------------------
 
 require 'gateway'
+
+# GPG configuration
+# -----------------
+
+require 'gpg'
 
 # Our models
 # ----------

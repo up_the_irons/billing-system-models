@@ -34,6 +34,7 @@ Requirements
 * ActiveRecord
 * ActiveMerchant
 * MySQL
+* GnuPG
 * FactoryGirl (for running specs)
 
 Installation
@@ -58,6 +59,10 @@ key file is named ``my_paypal.pem``
 There is one block for the "live" environment, where real credit cards are
 charged, and one block for the "test" environment, which mocks everything
 through PayPal's Sandbox and no real money is exchanged.
+
+Copy ``lib/gpg.yml.example`` to ``lib/gpg.yml`` and fill in the recipient
+field.  This should be the GPG UID of the user whose public key will be used
+to encrypt credit card data stored in the database.
 
 Other Processors
 ----------------
