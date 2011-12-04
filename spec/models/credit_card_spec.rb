@@ -88,6 +88,81 @@ ENCRYPTED
     end
   end
 
+  context "encrypt!()" do
+    before do
+      @cc = CreditCard.new(credit_card_hash)
+    end
+
+    def do_encrypt!
+      @cc.instance_eval do
+        encrypt!
+      end
+    end
+
+    context "with encrypted credit card number" do
+      before do
+        @cc_number = "I am encrypted"
+        @cc.should_receive(:encrypted?).and_return(true)
+        @cc.number = @cc_number
+      end
+
+      specify "should not alter credit card number" do
+        @cc.number.should == @cc_number
+        do_encrypt!
+        @cc.number.should == @cc_number
+      end
+
+      specify "should return false" do
+        do_encrypt!.should == false
+      end
+    end
+
+    context "with invalid credit card number" do
+      before do
+        @cc.stub!(:encrypted?).and_return(false)
+        @cc.should_receive(:is_valid_number?).and_return(false)
+      end
+
+      specify "should return false" do
+        do_encrypt!.should == false
+      end
+    end
+
+    context "with clear text credit card number" do
+      before do
+        @cc.should_receive(:encrypted?).and_return(false)
+        @cc.should_receive(:is_valid_number?).and_return(true)
+        Kernel.stub!(:`).and_return(true)
+      end
+
+      specify "should call gpg" do
+         $GPG_RECIPIENT = 'me@example.com'
+         Kernel.should_receive(:`).with("echo #{@number} | gpg --batch -e --armor --recipient #{$GPG_RECIPIENT} --output -")
+         do_encrypt!
+      end
+
+      context "upon successful gpg" do
+        before do
+          Kernel.stub!(:`).and_return("-----BEGIN PGP MESSAGE-----\n")
+        end
+
+        specify "should return true" do
+          do_encrypt!.should == true
+        end
+      end
+
+      context "upon unsuccessful gpg" do
+        before do
+          Kernel.stub!(:`).and_return('')
+        end
+
+        specify "should return false" do
+          do_encrypt!.should == false
+        end
+      end
+    end
+  end
+
   context "charge()" do
     specify "should create Charge record" do
       @cc.charges.should_receive(:create).with(

@@ -24,6 +24,24 @@ class CreditCard < ActiveRecord::Base
 
   private
 
+  def encrypt!
+    if encrypted? || !is_valid_number?
+      return false
+    end
+
+    command = "echo #{number} | gpg --batch -e --armor --recipient #{$GPG_RECIPIENT} --output -"
+
+    # Instead of using backticks directly, we do it this way in order to be
+    # able to stub the method in specs
+    output = Kernel.send(:`, command)
+
+    if output =~ /^-----BEGIN PGP MESSAGE-----\n/
+      return true
+    end
+
+    false
+  end
+
   def charge(amount)
     if amount.nil?
       return nil
