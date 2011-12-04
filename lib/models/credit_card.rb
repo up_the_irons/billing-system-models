@@ -22,10 +22,31 @@ class CreditCard < ActiveRecord::Base
     false
   end
 
+  def valid_number?
+    if number !~ /^[0-9]+$/
+      return false
+    end
+
+    luhn(number)
+  end
+
+  # http://rosettacode.org/wiki/Luhn_test_of_credit_card_numbers#Ruby
+  def luhn(code)
+    s1 = s2 = 0
+    code.to_s.reverse.chars.each_slice(2) do |odd, even|
+      s1 += odd.to_i
+
+      double = even.to_i * 2
+      double -= 9 if double >= 10
+      s2 += double
+    end
+    (s1 + s2) % 10 == 0
+  end
+
   private
 
   def encrypt!
-    if encrypted? || !is_valid_number?
+    if encrypted? || !valid_number?
       return false
     end
 

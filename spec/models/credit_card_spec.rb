@@ -31,6 +31,40 @@ context "CreditCard class with fixtures loaded" do
     }
   end
 
+  context "valid_number?()" do
+    context "when credit card number passes Luhn test" do
+      before do
+        # This passes Luhn test
+        @cc = CreditCard.new(:number => '1234567812345670')
+      end
+
+      specify "should return true" do
+        @cc.valid_number?.should == true
+      end
+    end
+
+    context "when credit card number does not pass Luhn test" do
+      before do
+        # This does not pass Luhn test
+        @cc = CreditCard.new(:number => '1234567812345678')
+      end
+
+      specify "should return false" do
+        @cc.valid_number?.should == false
+      end
+    end
+
+    context "when credit card number contains non-numeric characters" do
+      before do
+        @cc = CreditCard.new(:number => '4111foo')
+      end
+
+      specify "should return false" do
+        @cc.valid_number?.should == false
+      end
+    end
+  end
+
   context "encrypted?()" do
     context "with encrypted credit card number" do
       before do
@@ -64,7 +98,6 @@ ENCRYPTED
 
     context "with clear text credit card number" do
       before do
-
         @cc = CreditCard.new(credit_card_hash.merge(:number =>
                                                     '4111111111111111'))
 
@@ -120,7 +153,7 @@ ENCRYPTED
     context "with invalid credit card number" do
       before do
         @cc.stub!(:encrypted?).and_return(false)
-        @cc.should_receive(:is_valid_number?).and_return(false)
+        @cc.should_receive(:valid_number?).and_return(false)
       end
 
       specify "should return false" do
@@ -131,7 +164,7 @@ ENCRYPTED
     context "with clear text credit card number" do
       before do
         @cc.should_receive(:encrypted?).and_return(false)
-        @cc.should_receive(:is_valid_number?).and_return(true)
+        @cc.should_receive(:valid_number?).and_return(true)
         Kernel.stub!(:`).and_return(true)
       end
 
