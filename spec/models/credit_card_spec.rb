@@ -10,6 +10,12 @@ context "CreditCard class with fixtures loaded" do
     @first_name = "John"
     @last_name  = "Doe"
 
+    InvoicesPayment.delete_all
+    Payment.delete_all
+    InvoicesLineItem.delete_all
+    Invoice.delete_all
+    Charge.delete_all
+    CreditCard.delete_all
     Account.delete_all
 
     @cc = Factory.create(:credit_card,

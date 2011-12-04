@@ -6,6 +6,8 @@ context "Invoice class" do
     Payment.delete_all
     InvoicesLineItem.delete_all
     Invoice.delete_all
+    Charge.delete_all
+    CreditCard.delete_all
     Account.delete_all
   end
 
