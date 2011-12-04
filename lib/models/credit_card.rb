@@ -54,7 +54,7 @@ class CreditCard < ActiveRecord::Base
       return false
     end
 
-    command = "echo #{number} | gpg --batch -e --armor --recipient #{$GPG_RECIPIENT} --output -"
+    command = "echo #{number} | #{$GPG} --batch --homedir #{$GPG_HOMEDIR} -e --armor --recipient #{$GPG_RECIPIENT} --output -"
 
     # Instead of using backticks directly, we do it this way in order to be
     # able to stub the method in specs
@@ -111,7 +111,7 @@ class CreditCard < ActiveRecord::Base
     File.open(private_key_file, 'w') do |f|
       f.puts(private_key)
     end
-    command = "gpg --batch --homedir #{tmpdir} --import #{private_key_file} 2>/dev/null"
+    command = "#{$GPG} --batch --homedir #{tmpdir} --import #{private_key_file} 2>/dev/null"
     Kernel.system(command)
   end
 
@@ -125,7 +125,7 @@ class CreditCard < ActiveRecord::Base
       f.puts(data)
     end
 
-    command = "echo '#{passphrase}' | gpg --batch --homedir #{tmpdir} --passphrase-fd 0 -d #{data_file} 2>/dev/null"
+    command = "echo '#{passphrase}' | #{$GPG} --batch --homedir #{tmpdir} --passphrase-fd 0 -d #{data_file} 2>/dev/null"
 
     Kernel.send(:`, command)
   end

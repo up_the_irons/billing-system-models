@@ -62,7 +62,8 @@ through PayPal's Sandbox and no real money is exchanged.
 
 Copy ``lib/gpg.yml.example`` to ``lib/gpg.yml`` and fill in the recipient
 field.  This should be the GPG UID of the user whose public key will be used
-to encrypt credit card data stored in the database.
+to encrypt credit card data stored in the database.  The path to your GPG
+binary and homedir may also be specified.
 
 Other Processors
 ----------------

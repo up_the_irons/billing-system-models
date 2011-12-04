@@ -129,6 +129,7 @@ ENCRYPTED
 
   context "encrypt!()" do
     before do
+      $GPG = 'gpg'
       @cc = CreditCard.new(credit_card_hash)
     end
 
@@ -176,7 +177,7 @@ ENCRYPTED
 
       specify "should call gpg" do
          $GPG_RECIPIENT = 'me@example.com'
-         Kernel.should_receive(:`).with("echo #{@number} | gpg --batch -e --armor --recipient #{$GPG_RECIPIENT} --output -")
+         Kernel.should_receive(:`).with("echo #{@number} | gpg --batch --homedir #{$GPG_HOMEDIR} -e --armor --recipient #{$GPG_RECIPIENT} --output -")
          do_encrypt!
       end
 
@@ -210,6 +211,8 @@ ENCRYPTED
 
   context "decrypt!()" do
     before do
+      $GPG = 'gpg'
+
       @cc = CreditCard.new(credit_card_hash)
 
       @private_key = 'foobar'
