@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 context "CreditCard class with fixtures loaded" do
 
   before :each do
-    @number = "4111111111111111"
+    @number = "PGP MESSAGE"
     @month  = "01"
     @year   = "2018"
     @cvv    = 999
@@ -151,8 +151,8 @@ ENCRYPTED
         @cc.number.should == @cc_number
       end
 
-      specify "should return false" do
-        do_encrypt!.should == false
+      specify "should return true" do
+        do_encrypt!.should == true
       end
     end
 

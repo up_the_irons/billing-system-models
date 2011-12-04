@@ -20,7 +20,7 @@ end
 
 Factory.define :credit_card do |cc|
   cc.association :account
-  cc.number 4111111111111111
+  cc.number 'PGP MESSAGE'
   cc.month 1
   cc.year 2018
   cc.cvv 999

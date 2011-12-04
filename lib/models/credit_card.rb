@@ -46,7 +46,9 @@ class CreditCard < ActiveRecord::Base
   private
 
   def encrypt!
-    if encrypted? || !valid_number?
+    return true if encrypted?
+
+    if !valid_number?
       return false
     end
 
