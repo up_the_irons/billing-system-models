@@ -57,6 +57,7 @@ class CreditCard < ActiveRecord::Base
     output = Kernel.send(:`, command)
 
     if output =~ /^-----BEGIN PGP MESSAGE-----\n/
+      self.number = output
       return true
     end
 

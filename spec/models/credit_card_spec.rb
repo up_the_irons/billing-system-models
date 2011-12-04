@@ -182,11 +182,17 @@ ENCRYPTED
 
       context "upon successful gpg" do
         before do
-          Kernel.stub!(:`).and_return("-----BEGIN PGP MESSAGE-----\n")
+          @encrypted_number = "-----BEGIN PGP MESSAGE-----\n"
+          Kernel.stub!(:`).and_return(@encrypted_number)
         end
 
         specify "should return true" do
           do_encrypt!.should == true
+        end
+
+        specify "number should be encrypted" do
+          do_encrypt!
+          @cc.number.should == @encrypted_number
         end
       end
 
