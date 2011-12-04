@@ -7,5 +7,6 @@ class RefactorCreditCards < ActiveRecord::Migration
   end
 
   def self.down
+    fail "No going back"
   end
 end
