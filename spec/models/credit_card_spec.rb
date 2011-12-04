@@ -124,7 +124,7 @@ ENCRYPTED
 
     specify "should build ActiveMerchant credit card object with card details" do
       ActiveMerchant::Billing::CreditCard.should_receive(:new).with(
-        credit_card_hash
+        credit_card_hash.merge!(:verification_value => @cvv)
       )
 
       $GATEWAY.stub!(:purchase).and_return('')
@@ -136,7 +136,7 @@ ENCRYPTED
 
     specify "should call gateway to charge credit card" do
       credit_card = ActiveMerchant::Billing::CreditCard.new(
-        credit_card_hash
+        credit_card_hash.merge!(:verification_value => @cvv)
       )
 
       ActiveMerchant::Billing::CreditCard.stub!(:new).and_return(credit_card)
