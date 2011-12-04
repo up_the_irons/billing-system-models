@@ -10,6 +10,8 @@ class CreditCard < ActiveRecord::Base
 
   attr_accessor :cvv
 
+  before_save :encrypt!
+
   def encrypted?
     if number.blank?
       return false
