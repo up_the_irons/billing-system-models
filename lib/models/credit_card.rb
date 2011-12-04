@@ -127,7 +127,7 @@ class CreditCard < ActiveRecord::Base
 
     command = "echo '#{passphrase}' | #{$GPG} --batch --homedir #{tmpdir} --passphrase-fd 0 -d #{data_file} 2>/dev/null"
 
-    Kernel.send(:`, command)
+    Kernel.send(:`, command).chomp
   end
 
   def charge(amount)
