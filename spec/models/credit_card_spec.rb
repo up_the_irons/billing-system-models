@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 context "CreditCard class with fixtures loaded" do
 
   before :each do
-    @number = "encrypted data"
+    @number = "4111111111111111"
     @month  = "01"
     @year   = "2018"
     @cvv    = 999
@@ -26,10 +26,66 @@ context "CreditCard class with fixtures loaded" do
       :number => @number,
       :month => @month,
       :year => @year,
-      :verification_value => @cvv,
       :first_name => @first_name,
       :last_name => @last_name
     }
+  end
+
+  context "encrypted?()" do
+    context "with encrypted credit card number" do
+      before do
+        @cc = CreditCard.new(credit_card_hash.merge(:number => <<-ENCRYPTED
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+hQIMA8MXmy8BLfGpARAAgiRtx2j7k4KAGUdEPvmXPTH5DJvWnNynqIIg1JACDWK+
+xNFa00DP0MCBzv5rV0qZFogL473XYpPS0Q9sfZJ3lFTibzWLwm5CTxLzrNsMM9Ul
+ZKMixsFoSLYioTgukZMAUnBZHwUjb2vOPRvVClQmOKjJFzCDHTPhYF/WbFSgDtzM
+G/0nB/qP4gd68HM/aySs3zqj1C6tXNZMCC9ZUY1+eiBQeS/lOuCrgcLwj6UZVU5J
+87jcJW/6ExPajfm46DdA1drnOBa00pQ8FiXxezNjdCadqB2AvxtuclFRxR5X2cJu
+zNGI5295aE4fDyuhQ05FJGHbzLhtg8qh9X3FKZ86+yh4OabAqoRwMpthA+tX9BYB
+Fd/kw8qtjXnFcN4VxpR+CYvWhNoanxe4zNrZUArCodrFVhCdfmdr3kmsb70R1d0n
+BtkkiW+6eCKpJVjfaddhetSWu/dV3o9l7X4U7fI9QfQK5DUa4MdGpOMJs1k/EOJI
+F13tCIXxk7+gzCveMXrwhVkXDk/12srJz7wHlvvOixt/jm022TiiEV81UJxNYsnC
++HOC0PrjURbShGH133b8NXbOdAdUmR5yxoZbPeD+j9P5Jg7UkBYPG/0AMH/QhF30
+DFpDfySJhO/f6a5k+ct+inho5QX1VU2MB0U0/nwZGPmBqT0FSpOmbBvaiyvMG9DS
+PwGGXwJOFdbXQl+BuHsfgvw8VmJOoz/57Rt3OVekCiGBE6/EisoM4fiJWsZ8194X
+xXLTCQ4aVp2k8kH6CgqYDw==
+=DjNl
+-----END PGP MESSAGE-----
+ENCRYPTED
+                                                   ))
+      end
+
+      specify "should return true" do
+        @cc.encrypted?.should == true
+      end
+    end
+
+    context "with clear text credit card number" do
+      before do
+
+        @cc = CreditCard.new(credit_card_hash.merge(:number =>
+                                                    '4111111111111111'))
+
+      end
+
+      specify "should return false" do
+        @cc.encrypted?.should == false
+      end
+    end
+
+    context "with empty credit card number" do
+      before do
+
+        @cc = CreditCard.new(credit_card_hash.merge(:number => ''))
+
+      end
+
+      specify "should return false" do
+        @cc.encrypted?.should == false
+      end
+    end
   end
 
   context "charge()" do

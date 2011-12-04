@@ -10,6 +10,18 @@ class CreditCard < ActiveRecord::Base
 
   attr_accessor :cvv
 
+  def encrypted?
+    if number.blank?
+      return false
+    end
+
+    if number =~ /PGP MESSAGE/
+      return true
+    end
+
+    false
+  end
+
   private
 
   def charge(amount)
