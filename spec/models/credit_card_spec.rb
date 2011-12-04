@@ -208,6 +208,197 @@ ENCRYPTED
     end
   end
 
+  context "decrypt!()" do
+    before do
+      @cc = CreditCard.new(credit_card_hash)
+
+      @private_key = 'foobar'
+      @passphrase  = 'nosekritz'
+    end
+
+    def do_decrypt!(private_key, passphrase)
+      @cc.instance_eval do
+        decrypt!(private_key, passphrase)
+      end
+    end
+
+    before do
+      @tmpdir = '/tmp/foo'
+      Dir.stub!(:mktmpdir).and_return(@tmpdir)
+    end
+
+    context "with encrypted credit card number" do
+      before do
+        @cc.should_receive(:encrypted?).and_return(true)
+        @cc.stub!(:gpg_import_private_key!)
+        @cc.stub!(:gpg_decrypt!)
+      end
+
+      specify "should create and remove temporary directory" do
+        Dir.should_receive(:mktmpdir).and_return(@tmpdir)
+        Kernel.should_receive(:system).with("rm -rf #{@tmpdir}")
+        do_decrypt!(@private_key, @passphrase)
+      end
+
+      context "with private key and passphrase" do
+        before do
+          @private_key = 'foobar'
+          @passphrase  = 'nosekritz'
+        end
+
+        specify "should import private key" do
+          @cc.should_receive(:gpg_import_private_key!).with(@tmpdir,
+                                                            @private_key)
+          do_decrypt!(@private_key, @passphrase)
+        end
+
+        specify "should decrypt data and assign to number" do
+          @clear = 'clear text'
+          @cc.stub!(:gpg_import_private_key)
+          @cc.should_receive(:gpg_decrypt!).with(@tmpdir, @cc.number, @passphrase).\
+            and_return(@clear)
+
+          do_decrypt!(@private_key, @passphrase)
+
+          @cc.number.should == @clear
+        end
+
+        context "when decryption returns empty string" do
+          specify "should not assign to number" do
+            @before = @cc.number
+            @cc.stub!(:gpg_import_private_key)
+            @cc.should_receive(:gpg_decrypt!).with(@tmpdir, @cc.number, @passphrase).\
+              and_return('')
+
+            do_decrypt!(@private_key, @passphrase)
+
+            @cc.number.should == @before
+          end
+        end
+
+        context "when exception raised" do
+          before do
+            @cc.should_receive(:gpg_import_private_key!).and_raise(Exception)
+          end
+
+          specify "should remove temporary directory" do
+            Kernel.should_receive(:system).with("rm -rf #{@tmpdir}")
+            do_decrypt!(@private_key, @passphrase)
+          end
+
+          specify "should return false" do
+            do_decrypt!(@private_key, @passphrase).should == false
+          end
+        end
+      end
+
+      context "without private key" do
+        before do
+          @private_key = ''
+        end
+
+        specify "should return false" do
+          do_decrypt!(@private_key, @passphrase).should == false
+        end
+      end
+
+      context "without passphrase" do
+        before do
+          @passphrase = ''
+        end
+
+        specify "should return false" do
+          do_decrypt!(@private_key, @passphrase).should == false
+        end
+      end
+    end
+
+    context "with clear text credit card number" do
+      before do
+        @cc.should_receive(:encrypted?).and_return(false)
+        @cc.number = @number
+      end
+
+      specify "should not alter credit card number" do
+        @cc.number.should == @number
+        do_decrypt!(@private_key, @passphrase)
+        @cc.number.should == @number
+      end
+
+      specify "should return true" do
+        do_decrypt!(@private_key, @passphrase).should == true
+      end
+    end
+  end
+
+  context "gpg_import_private_key!()" do
+    before do
+      @tmpdir = '/tmp/foo'
+      @private_key = 'foobar'
+    end
+
+    def do_gpg_import_private_key!
+      tmpdir = @tmpdir
+      private_key = @private_key
+
+      @cc.instance_eval do
+        gpg_import_private_key!(tmpdir, private_key)
+      end
+    end
+
+    specify "should import private key" do
+      private_key_file = @tmpdir + "/.privkey.txt"
+      File.should_receive(:open).with(private_key_file, 'w')
+      command = "gpg --batch --homedir #{@tmpdir} --import #{private_key_file} 2>/dev/null"
+      Kernel.should_receive(:system).with(command)
+      do_gpg_import_private_key!
+    end
+  end
+
+  context "gpg_decrypt!()" do
+    def do_gpg_decrypt!
+      tmpdir = @tmpdir
+      data = @data
+      passphrase = @passphrase
+
+      @cc.instance_eval do
+        gpg_decrypt!(tmpdir, data, passphrase)
+      end
+    end
+
+    context "with temporary directory, data, and passphrase" do
+      before do
+        @tmpdir = '/tmp/foo'
+        @data = 'PGP MESSAGE'
+        @passphrase = 'foobar'
+      end
+
+      specify "should decrypt data" do
+        data_file = @tmpdir + '/.data.txt'
+        File.should_receive(:open).with(data_file, 'w')
+        command = "echo '#{@passphrase}' | gpg --batch --homedir #{@tmpdir} --passphrase-fd 0 -d #{data_file} 2>/dev/null"
+        Kernel.should_receive(:`).with(command)
+        do_gpg_decrypt!
+      end
+    end
+
+    context "without temporary directory, data, or passphrase" do
+      specify "should return empty string" do
+        @tmpdir = ''
+        do_gpg_decrypt!.should == ''
+        @tmpdir = '/tmp/foo'
+
+        @data = ''
+        do_gpg_decrypt!.should == ''
+        @data = 'PGP MESSAGE'
+
+        @passphrase = ''
+        do_gpg_decrypt!.should == ''
+        @passphrase = 'foobar'
+      end
+    end
+  end
+
   context "charge()" do
     specify "should create Charge record" do
       @cc.charges.should_receive(:create).with(

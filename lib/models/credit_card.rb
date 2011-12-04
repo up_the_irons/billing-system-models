@@ -68,6 +68,68 @@ class CreditCard < ActiveRecord::Base
     false
   end
 
+  # private_key is an ASCII armored version of the secret key
+  def decrypt!(private_key, passphrase)
+    return true if !encrypted?
+
+    private_key = private_key.to_s
+    passphrase = passphrase.to_s
+
+    if private_key.empty? || passphrase.empty?
+      return false
+    end
+
+    # Is there a way to pass an ASCII armored secret key filename to GPG
+    # directly?
+    #
+    # Couldn't find one, so we must set up temporary GPG staging area
+    tmpdir = Dir.mktmpdir
+
+    data = ''
+    begin
+      gpg_import_private_key!(tmpdir, private_key)
+      data = gpg_decrypt!(tmpdir, number, passphrase)
+
+      # Remove tmpdir
+      Kernel.system("rm -rf #{tmpdir}")
+
+      if data && !data.empty?
+        self.number = data
+
+        return true
+      end
+    rescue Exception => e
+      # Remove tmpdir
+      Kernel.system("rm -rf #{tmpdir}")
+    end
+
+    false
+  end
+
+  def gpg_import_private_key!(tmpdir, private_key)
+    private_key_file = tmpdir + '/.privkey.txt'
+    File.open(private_key_file, 'w') do |f|
+      f.puts(private_key)
+    end
+    command = "gpg --batch --homedir #{tmpdir} --import #{private_key_file} 2>/dev/null"
+    Kernel.system(command)
+  end
+
+  def gpg_decrypt!(tmpdir, data, passphrase)
+    if tmpdir.blank? || data.blank? || passphrase.blank?
+      return ''
+    end
+
+    data_file = tmpdir + '/.data.txt'
+    File.open(data_file, 'w') do |f|
+      f.puts(data)
+    end
+
+    command = "echo '#{passphrase}' | gpg --batch --homedir #{tmpdir} --passphrase-fd 0 -d #{data_file} 2>/dev/null"
+
+    Kernel.send(:`, command)
+  end
+
   def charge(amount)
     if amount.nil?
       return nil

@@ -10,6 +10,7 @@ rescue LoadError
 end
 
 require 'active_merchant'
+require 'tmpdir'
 
 $:.unshift File.join(File.dirname(__FILE__), "lib")
 
