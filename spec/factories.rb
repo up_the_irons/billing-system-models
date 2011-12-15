@@ -33,3 +33,7 @@ Factory.define :charge do |c|
   c.association :credit_card
   c.amount 5.00
 end
+
+Factory.define :sales_receipt do |sr|
+  sr.association :account
+end
