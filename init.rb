@@ -29,7 +29,6 @@ require 'gpg'
 
 $:.unshift File.join(File.dirname(__FILE__), "lib", "models")
 
-require 'account'
 require 'charge'
 require 'credit_card'
 require 'invoice'

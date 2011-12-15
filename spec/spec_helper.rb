@@ -30,6 +30,9 @@ end
 
 Spec::Mocks::Proxy.allow_message_expectations_on_nil
 
+class Account < ActiveRecord::Base
+end
+
 # Include when needed
 #
 # require 'ruby-debug'
