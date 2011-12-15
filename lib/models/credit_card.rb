@@ -8,6 +8,13 @@ class CreditCard < ActiveRecord::Base
   validates_presence_of :first_name
   validates_presence_of :last_name
 
+  validates_numericality_of :number, :if => Proc.new { |c| !c.encrypted? }
+  validates_numericality_of :month, :year
+
+  validates_length_of :month, :is => 2
+  validates_length_of :year, :is => 4
+  validates_length_of :billing_country_iso_3166, :is => 2
+
   attr_accessor :cvv
 
   before_save :encrypt!
