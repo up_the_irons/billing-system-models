@@ -36,7 +36,12 @@ class CreditCard < ActiveRecord::Base
       return false
     end
 
-    luhn(number)
+    if luhn(number)
+      return true
+    end
+
+    errors.add(:number, "does not pass Luhn check")
+    false
   end
 
   # http://rosettacode.org/wiki/Luhn_test_of_credit_card_numbers#Ruby
