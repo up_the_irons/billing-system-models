@@ -62,8 +62,12 @@ class CreditCard < ActiveRecord::Base
   def charge(amount)
     gateway_response = charge!(amount)
 
-    gateway_response.instance_eval do
-      @success
+    if gateway_response
+      gateway_response.instance_eval do
+        @success
+      end
+    else
+      false
     end
   end
 
@@ -194,6 +198,10 @@ class CreditCard < ActiveRecord::Base
     end
 
     if amount.to_i <= 0
+      return nil
+    end
+
+    if encrypted?
       return nil
     end
 

@@ -559,6 +559,10 @@ ENCRYPTED
   end
 
   context "charge!()" do
+    before do
+      @cc.stub!(:encrypted?).and_return(false)
+    end
+
     specify "should create Charge record" do
       @cc.charges.should_receive(:create).with(
         :date => Date.today.strftime("%Y-%m-%d"),
@@ -683,6 +687,11 @@ ENCRYPTED
 
       specify "should return nil when amount is nil" do
         @cc.instance_eval { charge!(nil) }.should == nil
+      end
+
+      specify "should return nil when number is encrypted" do
+        @cc.stub!(:encrypted?).and_return(true)
+        @cc.instance_eval { charge!(5) }.should == nil
       end
     end
   end
