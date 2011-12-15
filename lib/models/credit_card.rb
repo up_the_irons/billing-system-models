@@ -174,6 +174,7 @@ class CreditCard < ActiveRecord::Base
                                            :billing_address => nil)
 
       charge_rec.gateway_response = gateway_response
+      charge_rec.success = gateway_response.instance_eval { @success }
       charge_rec.save
     end
 

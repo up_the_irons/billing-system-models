@@ -5,6 +5,7 @@ class CreateCharges < ActiveRecord::Migration
       t.date    :date
       t.decimal :amount, :precision => 10, :scale => 2, :null => false
       t.text    :gateway_response
+      t.boolean :success, :null => false, :default => false
 
       t.timestamps
     end
