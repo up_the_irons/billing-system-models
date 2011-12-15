@@ -530,7 +530,4 @@ ENCRYPTED
       end
     end
   end
-
-  context "charge_and_record_payment() <-- ???" do
-  end
 end
