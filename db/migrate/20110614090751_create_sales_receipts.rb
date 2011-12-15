@@ -2,6 +2,7 @@ class CreateSalesReceipts < ActiveRecord::Migration
   def self.up
     create_table(:sales_receipts, :options => 'ENGINE=InnoDB DEFAULT CHARSET=utf8') do |t|
       t.references :account, :null => false
+      t.text    :sold_to
       t.date    :date
       t.text    :message
 
