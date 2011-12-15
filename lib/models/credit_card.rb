@@ -57,6 +57,52 @@ class CreditCard < ActiveRecord::Base
     (s1 + s2) % 10 == 0
   end
 
+  # Simple wrapper around private charge!() method that attempts a single
+  # charge and returns the gateway response true / false
+  def charge(amount)
+    gateway_response = charge!(amount)
+
+    gateway_response.instance_eval do
+      @success
+    end
+  end
+
+  def charge_with_sales_receipt(amount, line_items = [], opts = {})
+    message = opts[:message].to_s
+    sold_to = opts[:sold_to].to_s
+
+    if amount.to_f <= 0
+      return false
+    end
+
+    if charge(amount)
+      ActiveRecord::Base.transaction do
+        sr = SalesReceipt.create(:account_id => account.id,
+                                 :date => Time.now,
+                                 :sold_to => sold_to,
+                                 :message => message)
+
+        if sr
+          if line_items.empty?
+            line_items = [{
+              :code => '', :description => '', :amount => amount
+            }]
+          end
+
+          line_items.each do |line_item|
+            sr.line_items.create(
+              :code => line_item[:code],
+              :description => line_item[:description],
+              :amount => line_item[:amount]
+            )
+          end
+
+          sr
+        end
+      end
+    end
+  end
+
   private
 
   def encrypt!

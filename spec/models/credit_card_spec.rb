@@ -10,6 +10,8 @@ context "CreditCard class with fixtures loaded" do
     @first_name = "John"
     @last_name  = "Doe"
 
+    SalesReceiptsLineItem.delete_all
+    SalesReceipt.delete_all
     InvoicesPayment.delete_all
     Payment.delete_all
     InvoicesLineItem.delete_all
@@ -402,7 +404,161 @@ ENCRYPTED
     end
   end
 
-  context "charge()" do
+  context "charge" do
+    before do
+      @amount = 1.00
+
+      class MockGatewayResponse
+        attr_accessor :success
+      end
+
+      @mock_gateway_response = MockGatewayResponse.new
+      @mock_gateway_response.success = true
+    end
+
+    specify "should call charge!()" do
+      @cc.should_receive(:charge!).with(@amount).\
+        and_return(@mock_gateway_response)
+      @cc.charge(@amount)
+    end
+
+    context "when successful charge" do
+      before do
+        @cc.stub!(:charge!).and_return(@mock_gateway_response)
+      end
+
+      specify "should return true" do
+        @cc.charge(@amount).should == true
+      end
+    end
+
+    context "when unsuccessful charge" do
+      before do
+        @mock_gateway_response = MockGatewayResponse.new
+        @mock_gateway_response.success = false
+        @cc.stub!(:charge!).and_return(@mock_gateway_response)
+      end
+
+      specify "should return false" do
+        @cc.charge(@amount).should == false
+      end
+    end
+  end
+
+  context "charge_with_sales_receipt" do
+    context "with valid amount" do
+      before do
+        @amount = 1.00
+      end
+
+      specify "should call charge with amount" do
+        @cc.should_receive(:charge).with(@amount)
+        @cc.charge_with_sales_receipt(@amount)
+      end
+
+      context "with successful charge" do
+        before do
+          @cc.stub!(:charge).and_return(true)
+        end
+
+        specify "should create receipt" do
+          Time.stub!(:now).and_return('today')
+
+          SalesReceipt.should_receive(:create).with(
+            :account_id => @cc.account.id,
+            :date => 'today',
+            :sold_to => '',
+            :message => '')
+
+          @cc.charge_with_sales_receipt(@amount)
+        end
+
+        context "with line items" do
+          before do
+            @line_items = [
+              { :code => 'FOO',
+                :description => 'foo',
+                :amount => 2.00 },
+              { :code => 'BAR',
+                :description => 'bar',
+                :amount => 3.00 }
+            ]
+          end
+
+          specify "should create new line items" do
+            @mock_sales_receipt = double(:sales_receipt)
+            @mock_line_items = mock(:line_items,
+                                    :create => true)
+            @mock_sales_receipt.should_receive(:line_items).twice.\
+              and_return(@mock_line_items)
+            SalesReceipt.stub!(:create).and_return(@mock_sales_receipt)
+            @cc.charge_with_sales_receipt(@amount, @line_items)
+          end
+        end
+
+        context "without line items" do
+          before do
+            @line_items = []
+          end
+
+          specify "should create minimal line item with only amount" do
+            @mock_sales_receipt = double(:sales_receipt)
+            @mock_line_items = mock(:line_items)
+            @mock_line_items.should_receive(:create).with(
+              :code => '', :description => '', :amount => @amount)
+            @mock_sales_receipt.should_receive(:line_items).once.\
+              and_return(@mock_line_items)
+            SalesReceipt.stub!(:create).and_return(@mock_sales_receipt)
+            @cc.charge_with_sales_receipt(@amount, @line_items)
+          end
+        end
+      end
+
+      context "when unsuccessful charge" do
+        before do
+          @cc.stub!(:charge).and_return(false)
+        end
+
+        specify "should not create sales receipt" do
+          SalesReceipt.should_not_receive(:create)
+        end
+      end
+    end
+
+    context "with invalid amount" do
+      context "is nil" do
+        before do
+          @amount = nil
+        end
+
+        specify "should return false" do
+          @cc.charge_with_sales_receipt(@amount).should == false
+        end
+      end
+
+      context "is 0" do
+        before do
+          @amount = 0
+        end
+
+        specify "should return false" do
+          @cc.charge_with_sales_receipt(@amount).should == false
+        end
+      end
+
+      context "is < 0" do
+        before do
+          @amount = -1
+        end
+
+        specify "should return false" do
+          @cc.charge_with_sales_receipt(@amount).should == false
+        end
+      end
+    end
+  end
+
+  context "charge!()" do
     specify "should create Charge record" do
       @cc.charges.should_receive(:create).with(
         :date => Date.today.strftime("%Y-%m-%d"),
