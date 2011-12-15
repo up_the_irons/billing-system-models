@@ -6,7 +6,7 @@ context "CreditCard class with fixtures loaded" do
     @number = "PGP MESSAGE"
     @month  = "01"
     @year   = "2018"
-    @cvv    = 999
+    @cvv    = "999"
     @first_name = "John"
     @last_name  = "Doe"
 
@@ -380,7 +380,7 @@ ENCRYPTED
         data_file = @tmpdir + '/.data.txt'
         File.should_receive(:open).with(data_file, 'w')
         command = "echo '#{@passphrase}' | gpg --batch --homedir #{@tmpdir} --passphrase-fd 0 -d #{data_file} 2>/dev/null"
-        Kernel.should_receive(:`).with(command)
+        Kernel.should_receive(:`).with(command).and_return("")
         do_gpg_decrypt!
       end
     end

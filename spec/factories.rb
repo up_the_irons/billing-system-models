@@ -21,11 +21,12 @@ end
 Factory.define :credit_card do |cc|
   cc.association :account
   cc.number 'PGP MESSAGE'
-  cc.month 1
-  cc.year 2018
-  cc.cvv 999
+  cc.month "01"
+  cc.year "2018"
+  cc.cvv "999"
   cc.first_name "John"
   cc.last_name "Doe"
+  cc.billing_country_iso_3166 "US"
 end
 
 Factory.define :charge do |c|
