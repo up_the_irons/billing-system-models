@@ -142,7 +142,7 @@ class CreditCard < ActiveRecord::Base
     Kernel.send(:`, command).chomp
   end
 
-  def charge(amount)
+  def charge!(amount)
     if amount.nil?
       return nil
     end

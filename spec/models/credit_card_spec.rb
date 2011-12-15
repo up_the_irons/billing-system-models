@@ -411,7 +411,7 @@ ENCRYPTED
       $GATEWAY.stub!(:purchase).and_return('')
 
       @cc.instance_eval do
-        charge(10.00)
+        charge!(10.00)
       end
     end
 
@@ -430,7 +430,7 @@ ENCRYPTED
         :billing_address => nil).and_return(gateway_response)
 
       @cc.instance_eval do
-        charge(10.00)
+        charge!(10.00)
       end
 
       @charge_rec.gateway_response.should == gateway_response
@@ -444,7 +444,7 @@ ENCRYPTED
       $GATEWAY.stub!(:purchase).and_return('')
 
       @cc.instance_eval do
-        charge(10.00)
+        charge!(10.00)
       end
     end
 
@@ -462,7 +462,7 @@ ENCRYPTED
         :billing_address => nil)
 
       @cc.instance_eval do
-        charge(10.00)
+        charge!(10.00)
       end
     end
 
@@ -478,7 +478,7 @@ ENCRYPTED
       $GATEWAY.should_not_receive(:purchase)
 
       @cc.instance_eval do
-        charge(10.00)
+        charge!(10.00)
       end
     end
 
@@ -495,7 +495,7 @@ ENCRYPTED
           :billing_address => nil).and_return(gateway_response)
 
         @cc.instance_eval do
-          charge(10.00)
+          charge!(10.00)
         end.should == gateway_response
       end
     end
@@ -509,24 +509,24 @@ ENCRYPTED
         @cc.charges.stub!(:create).and_return(Factory.build(:charge))
 
         @cc.instance_eval do
-          charge(10.00)
+          charge!(10.00)
         end.should == nil
       end
 
       specify "should return nil when amount is 0" do
-        @cc.instance_eval { charge(0) }.should == nil
+        @cc.instance_eval { charge!(0) }.should == nil
       end
 
       specify "should return nil when amount is less than 0" do
-        @cc.instance_eval { charge(-1) }.should == nil
+        @cc.instance_eval { charge!(-1) }.should == nil
       end
 
       specify "should return nil when amount is blank" do
-        @cc.instance_eval { charge("") }.should == nil
+        @cc.instance_eval { charge!("") }.should == nil
       end
 
       specify "should return nil when amount is nil" do
-        @cc.instance_eval { charge(nil) }.should == nil
+        @cc.instance_eval { charge!(nil) }.should == nil
       end
     end
   end
