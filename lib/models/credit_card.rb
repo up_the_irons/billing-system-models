@@ -19,6 +19,9 @@ class CreditCard < ActiveRecord::Base
 
   before_save :encrypt!
 
+  named_scope :active, :conditions => { :deleted_at => nil }
+  named_scope :inactive, :conditions => "deleted_at IS NOT NULL"
+
   def encrypted?
     if number.blank?
       return false
@@ -105,6 +108,17 @@ class CreditCard < ActiveRecord::Base
         end
       end
     end
+  end
+
+  def destroy
+    if !deleted?
+      self.update_attribute(:number, '41111')
+      self.update_attribute(:deleted_at, Time.now.utc)
+    end
+  end
+
+  def deleted?
+    deleted_at != nil
   end
 
   private
