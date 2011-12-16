@@ -27,6 +27,8 @@ require 'gpg'
 # Our models
 # ----------
 
+require 'credit_cards' # Mixin module
+
 $:.unshift File.join(File.dirname(__FILE__), "lib", "models")
 
 require 'charge'
