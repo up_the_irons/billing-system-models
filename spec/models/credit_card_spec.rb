@@ -512,6 +512,32 @@ ENCRYPTED
               end.should raise_error(SalesReceipt::LineItemSumError)
             end
           end
+
+          context "with exactly one line item" do
+            context "without line item amount" do
+              before do
+                @amount = 5.00
+
+                @line_items = [
+                  { :code => 'FOO',
+                    :description => 'foo' }
+                ]
+              end
+
+              specify "should use total amount for line item amount" do
+                @mock_sales_receipt = double(:sales_receipt)
+                @mock_line_items = mock(:line_items,
+                                        :create => true)
+                @mock_line_items.should_receive(:create).with(
+                  @line_items[0].merge(:amount => @amount)
+                ).and_return(true)
+                @mock_sales_receipt.should_receive(:line_items).once.\
+                  and_return(@mock_line_items)
+                SalesReceipt.stub!(:create).and_return(@mock_sales_receipt)
+                @cc.charge_with_sales_receipt(@amount, @line_items)
+              end
+            end
+          end
         end
 
         context "without line items" do

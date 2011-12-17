@@ -82,6 +82,10 @@ class CreditCard < ActiveRecord::Base
       return false
     end
 
+    if line_items.size == 1 && line_items[0][:amount].nil?
+      line_items[0][:amount] = amount
+    end
+
     if !line_items.empty?
       sum = line_items.inject(0) { |sum, x| sum + x[:amount] }
 
