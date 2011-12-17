@@ -485,14 +485,32 @@ ENCRYPTED
             ]
           end
 
-          specify "should create new line items" do
-            @mock_sales_receipt = double(:sales_receipt)
-            @mock_line_items = mock(:line_items,
-                                    :create => true)
-            @mock_sales_receipt.should_receive(:line_items).twice.\
-              and_return(@mock_line_items)
-            SalesReceipt.stub!(:create).and_return(@mock_sales_receipt)
-            @cc.charge_with_sales_receipt(@amount, @line_items)
+          context "with correct line item amounts" do
+            before do
+              @amount = 5.00
+            end
+
+            specify "should create new line items" do
+              @mock_sales_receipt = double(:sales_receipt)
+              @mock_line_items = mock(:line_items,
+                                      :create => true)
+              @mock_sales_receipt.should_receive(:line_items).twice.\
+                and_return(@mock_line_items)
+              SalesReceipt.stub!(:create).and_return(@mock_sales_receipt)
+              @cc.charge_with_sales_receipt(@amount, @line_items)
+            end
+          end
+
+          context "with incorrect line item amounts" do
+            before do
+              @amount = 7.00
+            end
+
+            specify "should raise error" do
+              lambda do
+                @cc.charge_with_sales_receipt(@amount, @line_items)
+              end.should raise_error(SalesReceipt::LineItemSumError)
+            end
           end
         end
 

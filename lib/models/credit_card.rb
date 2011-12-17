@@ -82,6 +82,14 @@ class CreditCard < ActiveRecord::Base
       return false
     end
 
+    if !line_items.empty?
+      sum = line_items.inject(0) { |sum, x| sum + x[:amount] }
+
+      if sum != amount
+        raise SalesReceipt::LineItemSumError.new("Sum of line item amounts do not equal charge amount")
+      end
+    end
+
     if charge(amount)
       ActiveRecord::Base.transaction do
         sr = SalesReceipt.create(:account_id => account.id,
