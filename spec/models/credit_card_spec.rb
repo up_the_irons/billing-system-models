@@ -467,7 +467,7 @@ ENCRYPTED
           SalesReceipt.should_receive(:create).with(
             :account_id => @cc.account.id,
             :date => 'today',
-            :sold_to => '',
+            :sold_to => Account.new.sold_to,
             :message => '')
 
           @cc.charge_with_sales_receipt(@amount)
@@ -554,6 +554,26 @@ ENCRYPTED
               and_return(@mock_line_items)
             SalesReceipt.stub!(:create).and_return(@mock_sales_receipt)
             @cc.charge_with_sales_receipt(@amount, @line_items)
+          end
+
+          context "without sold_to option" do
+            context "with Account that responds to sold_to" do
+              before do
+                @sold_to = Account.new.sold_to
+              end
+
+              specify "should use Account#sold_to as sold_to" do
+                Time.stub!(:now).and_return('today')
+
+                SalesReceipt.should_receive(:create).with(
+                  :account_id => @cc.account.id,
+                  :date => 'today',
+                  :sold_to => @sold_to,
+                  :message => '')
+
+                @cc.charge_with_sales_receipt(@amount)
+              end
+            end
           end
         end
       end

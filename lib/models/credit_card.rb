@@ -94,6 +94,10 @@ class CreditCard < ActiveRecord::Base
       end
     end
 
+    if opts[:sold_to].nil? && account.respond_to?(:sold_to)
+      sold_to = account.sold_to
+    end
+
     if charge(amount)
       ActiveRecord::Base.transaction do
         sr = SalesReceipt.create(:account_id => account.id,

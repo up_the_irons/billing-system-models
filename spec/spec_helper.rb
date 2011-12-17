@@ -31,6 +31,13 @@ end
 Spec::Mocks::Proxy.allow_message_expectations_on_nil
 
 class Account < ActiveRecord::Base
+  def sold_to
+    <<-EOF
+John Doe
+111 Example Ln.
+Nowhere
+    EOF
+  end
 end
 
 # Include when needed
