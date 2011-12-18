@@ -24,6 +24,16 @@ class CreditCard < ActiveRecord::Base
   named_scope :active, :conditions => { :deleted_at => nil }
   named_scope :inactive, :conditions => "deleted_at IS NOT NULL"
 
+  # If this class has been "unlocked", then every credit card retrieved from
+  # the DB will automatically have its number decrypted.  This can pose a
+  # performance problem, so don't call CreditCard.unlock!() if you plan to
+  # be doing a lot of lookups.
+  def after_find
+    if CreditCard.private_key && CreditCard.passphrase
+      decrypt!
+    end
+  end
+
   def encrypted?
     if number.blank?
       return false
