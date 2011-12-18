@@ -17,6 +17,8 @@ class CreditCard < ActiveRecord::Base
 
   attr_accessor :cvv
 
+  cattr_accessor :private_key, :passphrase
+
   before_save :encrypt!
 
   named_scope :active, :conditions => { :deleted_at => nil }
@@ -139,6 +141,13 @@ class CreditCard < ActiveRecord::Base
     deleted_at != nil
   end
 
+  def self.unlock!(private_key, passphrase)
+    CreditCard.private_key = private_key
+    CreditCard.passphrase = passphrase
+
+    true
+  end
+
   private
 
   def encrypt!
@@ -163,11 +172,19 @@ class CreditCard < ActiveRecord::Base
   end
 
   # private_key is an ASCII armored version of the secret key
-  def decrypt!(private_key, passphrase)
+  def decrypt!(private_key = '', passphrase = '')
     return true if !encrypted?
 
     private_key = private_key.to_s
     passphrase = passphrase.to_s
+
+    if private_key.empty?
+      private_key = CreditCard.private_key.to_s
+    end
+
+    if passphrase.empty?
+      passphrase = CreditCard.passphrase.to_s
+    end
 
     if private_key.empty? || passphrase.empty?
       return false

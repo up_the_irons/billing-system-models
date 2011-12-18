@@ -129,6 +129,31 @@ ENCRYPTED
     end
   end
 
+  context "unlock!()" do
+    before do
+      @private_key = 'key'
+      @passphrase  = 'pass'
+    end
+
+    def do_unlock!
+      CreditCard.unlock!(@private_key, @passphrase)
+    end
+
+    specify "should return true" do
+      do_unlock!.should == true
+    end
+
+    specify "should assign private_key to class variable" do
+      CreditCard.should_receive(:private_key=).with(@private_key)
+      do_unlock!
+    end
+
+    specify "should assign passphrase to class variable" do
+      CreditCard.should_receive(:passphrase=).with(@passphrase)
+      do_unlock!
+    end
+  end
+
   context "encrypt!()" do
     before do
       $GPG = 'gpg'
@@ -302,6 +327,11 @@ ENCRYPTED
           @private_key = ''
         end
 
+        specify "should defer to CreditCard.private_key" do
+          CreditCard.should_receive(:private_key)
+          do_decrypt!(@private_key, @passphrase)
+        end
+
         specify "should return false" do
           do_decrypt!(@private_key, @passphrase).should == false
         end
@@ -310,6 +340,11 @@ ENCRYPTED
       context "without passphrase" do
         before do
           @passphrase = ''
+        end
+
+        specify "should defer to CreditCard.passphrase" do
+          CreditCard.should_receive(:passphrase)
+          do_decrypt!(@private_key, @passphrase)
         end
 
         specify "should return false" do
