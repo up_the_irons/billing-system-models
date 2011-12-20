@@ -174,6 +174,7 @@ class CreditCard < ActiveRecord::Base
     output = Kernel.send(:`, command)
 
     if output =~ /^-----BEGIN PGP MESSAGE-----\n/
+      self.display_number = number[number.size-4..-1]
       self.number = output
       return true
     end
