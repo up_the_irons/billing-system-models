@@ -266,9 +266,9 @@ class CreditCard < ActiveRecord::Base
     end
 
     credit_card = ActiveMerchant::Billing::CreditCard.new(
-      :number => number,
-      :month  => month,
-      :year   => year,
+      :number => number.to_i,
+      :month  => month.to_i,
+      :year   => year.to_i,
       :first_name => first_name,
       :last_name  => last_name,
       :verification_value => cvv
