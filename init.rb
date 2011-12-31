@@ -9,6 +9,7 @@ rescue LoadError
   require 'activerecord'
 end
 
+require 'actionmailer'
 require 'active_merchant'
 require 'tmpdir'
 
@@ -40,3 +41,6 @@ require 'sales_receipt'
 require 'sales_receipts_line_item'
 require 'invoices_line_item'
 require 'invoices_payment'
+
+# For email notifications
+require 'mailer'

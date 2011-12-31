@@ -36,6 +36,7 @@ Requirements
 
 * ActiveRecord
 * ActiveMerchant
+* ActionMailer
 * MySQL
 * GnuPG
 * FactoryGirl (for running specs)
@@ -76,6 +77,33 @@ To use these tools with a gateway besides PayPal, modify gateway.rb to suit
 your needs.  It should be relatively straight forward.
 
 See: http://www.activemerchant.org
+
+
+Notifications
+-------------
+
+A ``BillingSystemModels::Mailer`` subclass of ``ActionMailer::Base`` exists to
+send emails if/when appropriate.
+
+For these to work, you need to copy the email view templates into your app and
+customize them as needed.
+
+For example::
+
+  cd $RAILS_ROOT
+  mkdir -p app/views/billing_system_models/mailer
+  cp vendor/plugins/billing-system-models/lib/views/* \
+     app/views/billing_system_models/mailer
+
+To change the email headers (subject, from, etc...), which you will most
+certainly want to do, do the following::
+
+  BillingSystemModels::Mailer.decline_notice_headers = {
+    :subject => "Y U NO PAY?",
+    :from    => "billing@mycompany.com"
+  }
+
+See ``BillingSystemModels::Mailer`` for a full list of modifiable headers.
 
 TODO
 ----
