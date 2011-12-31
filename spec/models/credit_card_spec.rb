@@ -620,6 +620,37 @@ ENCRYPTED
 
         specify "should not create sales receipt" do
           SalesReceipt.should_not_receive(:create)
+          @cc.charge_with_sales_receipt(@amount)
+        end
+
+        specify "should return nil" do
+          @cc.charge_with_sales_receipt(@amount).should == nil
+        end
+
+        context "when email_decline_notice option is true" do
+          before do
+            @opts = {
+              :email_decline_notice => true
+            }
+          end
+
+          specify "should deliver decline_notice through Mailer" do
+            account = @cc.account
+
+            BillingSystemModels::Mailer.\
+              should_receive(:deliver_decline_notice).\
+              with(account)
+            @cc.charge_with_sales_receipt(@amount, [], @opts)
+          end
+
+          specify "should return nil" do
+            account = @cc.account
+
+            BillingSystemModels::Mailer.\
+              should_receive(:deliver_decline_notice).\
+              with(account).and_return(:tmail_obj)
+            @cc.charge_with_sales_receipt(@amount, [], @opts).should == nil
+          end
         end
       end
     end

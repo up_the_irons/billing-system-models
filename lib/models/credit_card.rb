@@ -90,6 +90,9 @@ class CreditCard < ActiveRecord::Base
     message = opts[:message].to_s
     sold_to = opts[:sold_to].to_s
 
+    email_decline_notice = opts[:email_decline_notice]
+    email_sales_receipt  = opts[:email_sales_receipt] # TODO
+
     amount = amount.to_f
 
     if amount <= 0
@@ -137,6 +140,11 @@ class CreditCard < ActiveRecord::Base
 
           sr
         end
+      end
+    else
+      if email_decline_notice
+        BillingSystemModels::Mailer.deliver_decline_notice(account)
+        nil
       end
     end
   end
