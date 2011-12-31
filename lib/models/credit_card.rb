@@ -104,7 +104,8 @@ class CreditCard < ActiveRecord::Base
       sum = line_items.inject(0) { |sum, x| sum + x[:amount].to_f }
 
       if sum != amount
-        raise SalesReceipt::LineItemSumError.new("Sum of line item amounts (#{sum}) does not equal charge amount (#{amount})")
+        error = "Sum of line item amounts (#{sum}) does not equal charge amount (#{amount})"
+        raise SalesReceipt::LineItemSumError.new(error)
       end
     end
 
