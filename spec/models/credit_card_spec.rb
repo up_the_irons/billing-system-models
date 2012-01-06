@@ -773,8 +773,16 @@ ENCRYPTED
     end
 
     context "on success" do
-      specify "should return gateway response hash" do
+      specify "should return charge record" do
         gateway_response = 'gateway response'
+
+        charge_rec = double(:charge_rec,
+                            :new_record? => false,
+                            :gateway_response= => gateway_response,
+                            :success= => true,
+                            :save => true)
+
+        @cc.charges.stub!(:create).and_return(charge_rec)
 
         ActiveMerchant::Billing::CreditCard.stub!(:new).and_return(nil)
 
@@ -786,7 +794,7 @@ ENCRYPTED
 
         @cc.instance_eval do
           charge!(10.00)
-        end.should == gateway_response
+        end.should == charge_rec
       end
     end
 

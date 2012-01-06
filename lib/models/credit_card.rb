@@ -299,8 +299,7 @@ class CreditCard < ActiveRecord::Base
       charge_rec.gateway_response = gateway_response
       charge_rec.success = gateway_response.instance_eval { @success }
       charge_rec.save
+      charge_rec
     end
-
-    return gateway_response
   end
 end
