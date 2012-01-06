@@ -1,3 +1,34 @@
-Dear Customer,
+<%
+  @line_items = ''
+  total = 0
+  @sr.line_items.each do |line_item|
+    total += line_item.amount
+    amount = sprintf("$%01.2f", line_item.amount)
+    description = line_item.description.to_s
+    @line_items += sprintf("| %-53s | %10s |\n", description, amount)
+  end
 
-This is your sales receipt.
+  total = sprintf("$%01.2f", total)
+  @total = sprintf("| TOTAL %60s |", total)
+-%>
+Example Co.                                          SALES RECEIPT
+12345 Nowhere St.                                    Date: <%= @sr.date.strftime("%m/%d/%Y") %>
+Some City, ST 99999
+(800) 555-1212
+
+SOLD TO:
+<%= @sr.sold_to %>
+
+<% if @charge -%>
+Payment Method: Credit Card (**<%= @charge.credit_card.display_number %>)
+
+<% end -%>
+----------------------------------------------------------------------
+| DESCRIPTION                                           |   AMOUNT   |
+----------------------------------------------------------------------
+<%= @line_items -%>
+----------------------------------------------------------------------
+<%= @total %>
+----------------------------------------------------------------------
+
+Thank you for your business.
