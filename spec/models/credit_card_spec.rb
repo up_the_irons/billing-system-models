@@ -515,6 +515,24 @@ ENCRYPTED
           @cc.charge_with_sales_receipt(@amount)
         end
 
+        context "when email_sales_receipt option is true" do
+          before do
+            @opts = {
+              :email_sales_receipt => true
+            }
+          end
+
+          specify "should deliver sales_receipt through Mailer" do
+            sales_receipt = double(:sales_receipt).as_null_object
+            SalesReceipt.stub!(:create).and_return(sales_receipt)
+
+            BillingSystemModels::Mailer.\
+              should_receive(:deliver_sales_receipt).\
+              with(sales_receipt)
+            @cc.charge_with_sales_receipt(@amount, [], @opts)
+          end
+        end
+
         context "with line items" do
           before do
             @line_items = [

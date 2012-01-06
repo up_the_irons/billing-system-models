@@ -27,8 +27,9 @@ module BillingSystemModels
       end
     end
 
-    # There is no view template for this one yet
-    def sales_receipt(account)
+    def sales_receipt(sales_receipt, charge = nil)
+      account = sales_receipt.account
+
       if account.email
         @subject = self.class.sales_receipt_headers[:subject]
         @from    = self.class.sales_receipt_headers[:from]
@@ -37,7 +38,8 @@ module BillingSystemModels
         @recipients = [account.email]
 
         @body = {
-          :account => account
+          :sr => sales_receipt,
+          :charge => charge
         }
       end
     end

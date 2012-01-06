@@ -92,7 +92,7 @@ class CreditCard < ActiveRecord::Base
     sold_to = opts[:sold_to].to_s
 
     email_decline_notice = opts[:email_decline_notice]
-    email_sales_receipt  = opts[:email_sales_receipt] # TODO
+    email_sales_receipt  = opts[:email_sales_receipt]
 
     amount = amount.to_f
 
@@ -118,6 +118,8 @@ class CreditCard < ActiveRecord::Base
     end
 
     if charge(amount)
+      sr = nil
+
       ActiveRecord::Base.transaction do
         sr = SalesReceipt.create(:account_id => account.id,
                                  :date => Time.now,
@@ -138,10 +140,14 @@ class CreditCard < ActiveRecord::Base
               :amount => line_item[:amount]
             )
           end
-
-          sr
         end
       end
+
+      if email_sales_receipt && sr
+        BillingSystemModels::Mailer.deliver_sales_receipt(sr)
+      end
+
+      sr
     else
       if email_decline_notice
         BillingSystemModels::Mailer.deliver_decline_notice(account)
