@@ -75,7 +75,8 @@ class CreditCard < ActiveRecord::Base
   # Simple wrapper around private charge!() method that attempts a single
   # charge and returns the gateway response true / false
   def charge(amount)
-    gateway_response = charge!(amount)
+    charge_rec = charge!(amount)
+    gateway_response = charge_rec.gateway_response
 
     if gateway_response
       gateway_response.instance_eval do

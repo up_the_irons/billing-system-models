@@ -449,17 +449,21 @@ ENCRYPTED
 
       @mock_gateway_response = MockGatewayResponse.new
       @mock_gateway_response.success = true
+
+      @charge_rec = double(:charge_rec,
+                           :gateway_response => @mock_gateway_response)
     end
 
     specify "should call charge!()" do
+
       @cc.should_receive(:charge!).with(@amount).\
-        and_return(@mock_gateway_response)
+        and_return(@charge_rec)
       @cc.charge(@amount)
     end
 
     context "when successful charge" do
       before do
-        @cc.stub!(:charge!).and_return(@mock_gateway_response)
+        @cc.stub!(:charge!).and_return(@charge_rec)
       end
 
       specify "should return true" do
@@ -471,7 +475,10 @@ ENCRYPTED
       before do
         @mock_gateway_response = MockGatewayResponse.new
         @mock_gateway_response.success = false
-        @cc.stub!(:charge!).and_return(@mock_gateway_response)
+        @charge_rec = double(:charge_rec,
+                             :gateway_response => @mock_gateway_response)
+
+        @cc.stub!(:charge!).and_return(@charge_rec)
       end
 
       specify "should return false" do
