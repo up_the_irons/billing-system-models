@@ -25,10 +25,14 @@ require 'gateway'
 
 require 'gpg'
 
-# Our models
+# Our mixins
 # ----------
 
-require 'credit_cards' # Mixin module
+require 'credit_cards'
+require 'sellable'
+
+# Our models
+# ----------
 
 $:.unshift File.join(File.dirname(__FILE__), "lib", "models")
 
