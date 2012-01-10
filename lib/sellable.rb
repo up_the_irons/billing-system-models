@@ -14,6 +14,14 @@ module BillingSystemModels
     end
 
     module InstanceMethods
+      def code
+        begin
+          super
+        rescue NoMethodError
+          raise NotImplementedError.new("#{self.class}#code not implemented")
+        end
+      end
+
       def description
         begin
           super
