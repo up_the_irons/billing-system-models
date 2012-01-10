@@ -26,7 +26,7 @@ module BillingSystemModels
         begin
           super
         rescue NoMethodError
-          raise NotImplementedError.new("#{self.class}#description not implemented")
+          raise NotImplementedError.new("#{self.class}#amount not implemented")
         end
       end
     end
