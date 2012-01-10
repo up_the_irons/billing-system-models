@@ -9,7 +9,15 @@ module BillingSystemModels
 
     module ClassMethods
       def create_invoice(sellables, opts = {})
-        # Coming soon!
+        date = opts[:date]
+        terms = opts[:terms].to_s
+        message = opts[:message].to_s
+
+        sellables = [sellables].flatten
+
+        if sellables.empty?
+          return false
+        end
       end
     end
 
