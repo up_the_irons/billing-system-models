@@ -23,7 +23,7 @@ describe "Sellable" do
             @sellables = [Foo.new]
           end
 
-          it "should create invoice with line items" do
+          it "should create invoice with line items and return true" do
             @invoice = double(:invoice,
                               :new_record? => false)
             Invoice.should_receive(:create).with(
@@ -43,7 +43,7 @@ describe "Sellable" do
               :amount => @sellables[0].amount
             )
 
-            Foo.create_invoice(@account, @sellables, @opts)
+            Foo.create_invoice(@account, @sellables, @opts).should == true
           end
 
           context "when invoice cannot be created" do

@@ -40,6 +40,8 @@ module BillingSystemModels
                                                  :description => description,
                                                  :amount => amount)
             end
+
+            true
           else
             raise "Invoice failed to be created"
           end
