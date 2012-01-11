@@ -11,19 +11,73 @@ end
 describe "Sellable" do
   describe "ClassMethods" do
     describe "create_invoice()" do
-      describe "with sellables" do
-        it "should create invoice with line items" do
-          pending
+      describe "with account" do
+        before do
+          @account = double(:account, :id => 1)
+          @date = '01-01-1970'
+          @opts = { :date => @date }
+        end
+
+        describe "with sellables" do
+          before do
+            @sellables = [Foo.new]
+          end
+
+          it "should create invoice with line items" do
+            @invoice = double(:invoice,
+                              :new_record? => false)
+            Invoice.should_receive(:create).with(
+              :account_id => @account.id,
+              :date       => @date,
+              :terms      => '',
+              :message    => ''
+            ).and_return(@invoice)
+
+            @invoices_line_items = double(:invoices_line_items)
+            @invoice.should_receive(:invoices_line_items).\
+              and_return(@invoices_line_items)
+            @invoices_line_items.should_receive(:create).with(
+              :date => @date,
+              :code => @sellables[0].code,
+              :description => @sellables[0].description,
+              :amount => @sellables[0].amount
+            )
+
+            Foo.create_invoice(@account, @sellables, @opts)
+          end
+
+          context "when invoice cannot be created" do
+            before do
+              # Bad account ID
+              @account = double(:account, :id => nil)
+            end
+
+            it "should raise exception" do
+              lambda {
+                Foo.create_invoice(@account, @sellables, @opts)
+              }.should raise_error(StandardError)
+            end
+          end
+        end
+
+        describe "without sellables" do
+          before do
+            @sellables = []
+          end
+
+          it "should return false" do
+            Foo.create_invoice(@account, @sellables).should == false
+          end
         end
       end
 
-      describe "without sellables" do
+      context "without account" do
         before do
-          @sellables = []
+          @account = nil
         end
 
         it "should return false" do
-          Foo.create_invoice(@sellables).should == false
+          Foo.create_invoice(@account, @sellables).should == false
         end
       end
     end
