@@ -33,15 +33,14 @@ describe "Sellable" do
               :message    => ''
             ).and_return(@invoice)
 
-            @invoices_line_items = double(:invoices_line_items)
-            @invoice.should_receive(:invoices_line_items).\
-              and_return(@invoices_line_items)
-            @invoices_line_items.should_receive(:create).with(
+            @line_items = double(:line_items)
+            @invoice.should_receive(:line_items).and_return(@line_items)
+            @line_items.should_receive(:create).with(
               :date => @date,
               :code => @sellables[0].code,
               :description => @sellables[0].description,
               :amount => @sellables[0].amount
-            )
+            ).and_return(true)
 
             Foo.create_invoice(@account, @sellables, @opts).should == true
           end
@@ -50,6 +49,23 @@ describe "Sellable" do
             before do
               # Bad account ID
               @account = double(:account, :id => nil)
+            end
+
+            it "should raise exception" do
+              lambda {
+                Foo.create_invoice(@account, @sellables, @opts)
+              }.should raise_error(StandardError)
+            end
+          end
+
+          context "when an invoice line item cannot be created" do
+            before do
+              @invoice = double(:invoice,
+                                :new_record? => false)
+              Invoice.should_receive(:create).and_return(@invoice)
+
+              @invoice.should_receive(:line_items).and_return(@line_items)
+              @line_items.should_receive(:create).and_return(false)
             end
 
             it "should raise exception" do

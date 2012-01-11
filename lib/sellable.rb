@@ -35,10 +35,12 @@ module BillingSystemModels
               description = sellable.description
               amount = sellable.amount
 
-              invoice.invoices_line_items.create(:date => date,
-                                                 :code => code,
-                                                 :description => description,
-                                                 :amount => amount)
+              if !invoice.line_items.create(:date => date,
+                                                     :code => code,
+                                                     :description => description,
+                                                     :amount => amount)
+                raise "Failed to create an invoice line item"
+              end
             end
 
             true
