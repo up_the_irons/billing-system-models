@@ -29,6 +29,7 @@ require 'gpg'
 # ----------
 
 require 'credit_cards'
+require 'invoices'
 require 'sellable'
 
 # Our models
