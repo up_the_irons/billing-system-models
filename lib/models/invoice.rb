@@ -4,6 +4,9 @@ class Invoice < ActiveRecord::Base
   has_many :invoices_payments
   has_many :payments, :through => :invoices_payments
 
+  named_scope :paid,   :conditions => 'paid = true'
+  named_scope :unpaid, :conditions => 'paid = false'
+
   def total
     line_items.inject(0) do |sum, li|
       sum + li.amount
