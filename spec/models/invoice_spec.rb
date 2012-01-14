@@ -95,13 +95,4 @@ context "Invoice class" do
       @invoice.paid.should == 0
     end
   end
-
-  context "self.unpaid()" do
-    specify "should find and return all invoices with paid = false" do
-      unpaid_invoices = [double(:invoice_1), double(:invoice_2)]
-      Invoice.should_receive(:find_all_by_paid).with(false).\
-        and_return(unpaid_invoices)
-      Invoice.unpaid.should == unpaid_invoices
-    end
-  end
 end
