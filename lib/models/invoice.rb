@@ -22,4 +22,8 @@ class Invoice < ActiveRecord::Base
   def balance
     total - paid
   end
+
+  def self.unpaid
+    Invoice.find_all_by_paid(false)
+  end
 end
