@@ -10,6 +10,14 @@ context "CreditCard class with fixtures loaded" do
     @first_name = "John"
     @last_name  = "Doe"
 
+    @billing_name = "#{@first_name} #{@last_name}"
+    @billing_address_1 = "12345 Nowhere St."
+    @billing_city = "Space"
+    @billing_state = "XX"
+    @billing_postal_code = "99999"
+    @billing_country = "US"
+    @billing_phone = nil
+
     SalesReceiptsLineItem.delete_all
     SalesReceipt.delete_all
     InvoicesPayment.delete_all
@@ -25,7 +33,15 @@ context "CreditCard class with fixtures loaded" do
       :month      => @month,
       :year       => @year,
       :first_name => @first_name,
-      :last_name  => @last_name
+      :last_name  => @last_name,
+
+      :billing_name => @billing_name,
+      :billing_address_1 => @billing_address_1,
+      :billing_city => @billing_city,
+      :billing_state => @billing_state,
+      :billing_postal_code => @billing_postal_code,
+      :billing_country_iso_3166 => @billing_country,
+      :billing_phone => @billing_phone
     )
   end
 
@@ -716,6 +732,16 @@ ENCRYPTED
   context "charge!()" do
     before do
       @cc.stub!(:encrypted?).and_return(false)
+
+      @billing_address = {
+        :name => @billing_name,
+        :address1 => @billing_address_1,
+        :city => @billing_city,
+        :state => @billing_state,
+        :zip => @billing_postal_code,
+        :country => @billing_country,
+        :phone => @billing_phone
+      }
     end
 
     specify "should create Charge record" do
@@ -742,7 +768,7 @@ ENCRYPTED
         1000,
         nil,
         :ip => '127.0.0.1',
-        :billing_address => nil).and_return(gateway_response)
+        :billing_address => @billing_address).and_return(gateway_response)
 
       @cc.instance_eval do
         charge!(10.00)
@@ -770,19 +796,16 @@ ENCRYPTED
 
       ActiveMerchant::Billing::CreditCard.stub!(:new).and_return(credit_card)
 
+
       $GATEWAY.should_receive(:purchase).with(
         1000,
         credit_card,
         :ip => '127.0.0.1',
-        :billing_address => nil)
+        :billing_address => @billing_address)
 
       @cc.instance_eval do
         charge!(10.00)
       end
-    end
-
-    specify "should call gateway with correct billing address" do
-      pending
     end
 
     specify "should not call gateway to charge credit card if Charge record not saved" do
@@ -815,7 +838,7 @@ ENCRYPTED
           1000,
           nil,
           :ip => '127.0.0.1',
-          :billing_address => nil).and_return(gateway_response)
+          :billing_address => @billing_address).and_return(gateway_response)
 
         @cc.instance_eval do
           charge!(10.00)

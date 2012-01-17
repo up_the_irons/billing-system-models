@@ -298,10 +298,20 @@ class CreditCard < ActiveRecord::Base
 
     gateway_response = nil
     if charge_rec.new_record? == false
+      billing_address = {
+        :name => billing_name,
+        :address1 => billing_address_1,
+        :city => billing_city,
+        :state => billing_state,
+        :zip => billing_postal_code,
+        :country => billing_country_iso_3166,
+        :phone => billing_phone
+      }
+
       gateway_response = $GATEWAY.purchase(amount,
                                            credit_card,
                                            :ip => '127.0.0.1',
-                                           :billing_address => nil)
+                                           :billing_address => billing_address)
 
       charge_rec.gateway_response = gateway_response
       charge_rec.success = gateway_response.instance_eval { @success }
