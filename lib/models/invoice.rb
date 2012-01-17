@@ -1,7 +1,7 @@
 class Invoice < ActiveRecord::Base
   belongs_to :account
-  has_many :line_items, :class_name => 'InvoicesLineItem'
-  has_many :invoices_payments
+  has_many :line_items, :class_name => 'InvoicesLineItem', :dependent => :destroy
+  has_many :invoices_payments, :dependent => :destroy
   has_many :payments, :through => :invoices_payments
 
   named_scope :paid,   :conditions => 'paid = true'
