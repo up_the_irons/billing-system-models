@@ -3,6 +3,7 @@ module BillingSystemModels
     def self.included(base)
       base.module_eval do
         has_many :credit_cards
+        has_many :sales_receipts
 
         include InstanceMethods
       end
