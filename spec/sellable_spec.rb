@@ -3,9 +3,9 @@ require File.dirname(__FILE__) + '/spec_helper'
 class Foo
   include BillingSystemModels::Sellable
 
-  def code; 'WIDGET'; end
-  def description; 'Part description'; end
-  def amount; 10.00; end
+  def sellable_code; 'WIDGET'; end
+  def sellable_description; 'Part description'; end
+  def sellable_amount; 10.00; end
 end
 
 describe "Sellable" do
@@ -37,9 +37,9 @@ describe "Sellable" do
             @invoice.should_receive(:line_items).and_return(@line_items)
             @line_items.should_receive(:create).with(
               :date => @date,
-              :code => @sellables[0].code,
-              :description => @sellables[0].description,
-              :amount => @sellables[0].amount
+              :code => @sellables[0].sellable_code,
+              :description => @sellables[0].sellable_description,
+              :amount => @sellables[0].sellable_amount
             ).and_return(true)
 
             Foo.create_invoice(@account, @sellables, @opts).should == true

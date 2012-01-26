@@ -31,9 +31,9 @@ module BillingSystemModels
 
           if invoice && !invoice.new_record?
             sellables.each do |sellable|
-              code = sellable.code
-              description = sellable.description
-              amount = sellable.amount
+              code = sellable.sellable_code
+              description = sellable.sellable_description
+              amount = sellable.sellable_amount
 
               if !invoice.line_items.create(:date => date,
                                             :code => code,
@@ -52,27 +52,27 @@ module BillingSystemModels
     end
 
     module InstanceMethods
-      def code
+      def sellable_code
         begin
           super
         rescue NoMethodError
-          raise NotImplementedError.new("#{self.class}#code not implemented")
+          raise NotImplementedError.new("#{self.class}#sellable_code not implemented")
         end
       end
 
-      def description
+      def sellable_description
         begin
           super
         rescue NoMethodError
-          raise NotImplementedError.new("#{self.class}#description not implemented")
+          raise NotImplementedError.new("#{self.class}#sellable_description not implemented")
         end
       end
 
-      def amount
+      def sellable_amount
         begin
           super
         rescue NoMethodError
-          raise NotImplementedError.new("#{self.class}#amount not implemented")
+          raise NotImplementedError.new("#{self.class}#sellable_amount not implemented")
         end
       end
     end
