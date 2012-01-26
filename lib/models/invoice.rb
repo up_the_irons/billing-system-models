@@ -25,6 +25,10 @@ class Invoice < ActiveRecord::Base
     total - paid
   end
 
+  def paid?
+    read_attribute(:paid)
+  end
+
   def assign_bill_to
     if bill_to.nil? && account.respond_to?(:bill_to)
       bill_to = account.bill_to
