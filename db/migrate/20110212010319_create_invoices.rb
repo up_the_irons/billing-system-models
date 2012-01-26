@@ -14,6 +14,7 @@ class CreateInvoices < ActiveRecord::Migration
 
     create_table(:invoices, :options => 'ENGINE=InnoDB DEFAULT CHARSET=utf8') do |t|
       t.references :account, :null => false
+      t.text    :bill_to
       t.date    :date
       t.string  :terms
       t.text    :message

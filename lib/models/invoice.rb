@@ -7,6 +7,8 @@ class Invoice < ActiveRecord::Base
   named_scope :paid,   :conditions => 'paid = true'
   named_scope :unpaid, :conditions => 'paid = false'
 
+  before_create :assign_bill_to
+
   def total
     line_items.inject(0) do |sum, li|
       sum + li.amount
@@ -21,5 +23,15 @@ class Invoice < ActiveRecord::Base
 
   def balance
     total - paid
+  end
+
+  def assign_bill_to
+    if bill_to.nil? && account.respond_to?(:bill_to)
+      bill_to = account.bill_to
+
+      if !bill_to.nil?
+        self.bill_to = bill_to
+      end
+    end
   end
 end
