@@ -8,13 +8,12 @@ Billing System Models
 This repository aims to be a collection of ActiveRecord models that can
 be included as part of a merchant billing system.
 
-This is a work in progress and not all of the models are particularly
-useful yet.  I have also ripped parts of it out from an existing system,
-so there are some MySQL specific statements in the migrations.
+This is a work in progress and you should expect the models / methods /
+interfaces to change at any time.  I have also ripped parts of it out from an
+existing system, so there are some MySQL specific statements in the migrations.
 
-I am successfully using the Charge, CreditCard, SalesReceipt, and
-SalesReceiptsLineItem models in a production system.  The others are not
-finished yet.
+As of 2012, I am successfully using these models in a production system,
+invoicing and charging a fairly large set of customers.
 
 The models included are:
 
