@@ -9,6 +9,9 @@ class Invoice < ActiveRecord::Base
 
   before_create :assign_bill_to
 
+  before_validation :assign_date
+  validates_presence_of :date
+
   def total
     line_items.inject(0) do |sum, li|
       sum + li.amount
@@ -27,6 +30,12 @@ class Invoice < ActiveRecord::Base
 
   def paid?
     read_attribute(:paid)
+  end
+
+  def assign_date
+    if new_record? && date.nil?
+      self.date = Time.now
+    end
   end
 
   def assign_bill_to
