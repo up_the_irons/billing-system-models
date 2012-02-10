@@ -547,7 +547,7 @@ ENCRYPTED
 
             BillingSystemModels::Mailer.\
               should_receive(:deliver_sales_receipt).\
-              with(sales_receipt)
+              with(sales_receipt, @charge_rec)
             @cc.charge_with_sales_receipt(@amount, [], @opts)
           end
         end

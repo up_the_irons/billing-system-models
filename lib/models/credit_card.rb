@@ -145,7 +145,7 @@ class CreditCard < ActiveRecord::Base
       end
 
       if email_sales_receipt && sr
-        BillingSystemModels::Mailer.deliver_sales_receipt(sr)
+        BillingSystemModels::Mailer.deliver_sales_receipt(sr, charge_rec)
       end
 
       sr
