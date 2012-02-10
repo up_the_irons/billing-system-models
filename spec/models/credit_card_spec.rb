@@ -485,16 +485,6 @@ ENCRYPTED
       specify "should return true" do
         @cc.charge(@amount).should == true
       end
-
-      context "when verbse" do
-        before do
-          @opts = { :verbose => true }
-        end
-
-        specify "should return charge record" do
-          @cc.charge(@amount, :verbose => true).should == @charge_rec
-        end
-      end
     end
 
     context "when unsuccessful charge" do
@@ -517,16 +507,19 @@ ENCRYPTED
     context "with valid amount" do
       before do
         @amount = 1.00
+        @charge_rec = double(:charge_rec)
       end
 
       specify "should call charge with amount" do
-        @cc.should_receive(:charge).with(@amount)
+        @charge_rec.stub!(:success).and_return(true)
+        @cc.should_receive(:charge!).with(@amount).and_return(@charge_rec)
         @cc.charge_with_sales_receipt(@amount)
       end
 
       context "with successful charge" do
         before do
-          @cc.stub!(:charge).and_return(true)
+          @charge_rec.stub!(:success).and_return(true)
+          @cc.stub!(:charge!).and_return(@charge_rec)
         end
 
         specify "should create receipt" do
@@ -666,7 +659,8 @@ ENCRYPTED
 
       context "when unsuccessful charge" do
         before do
-          @cc.stub!(:charge).and_return(false)
+          @charge_rec.stub!(:success).and_return(false)
+          @cc.stub!(:charge!).and_return(@charge_rec)
         end
 
         specify "should not create sales receipt" do
