@@ -485,6 +485,16 @@ ENCRYPTED
       specify "should return true" do
         @cc.charge(@amount).should == true
       end
+
+      context "when verbse" do
+        before do
+          @opts = { :verbose => true }
+        end
+
+        specify "should return charge record" do
+          @cc.charge(@amount, :verbose => true).should == @charge_rec
+        end
+      end
     end
 
     context "when unsuccessful charge" do

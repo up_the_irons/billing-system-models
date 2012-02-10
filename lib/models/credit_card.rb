@@ -74,8 +74,15 @@ class CreditCard < ActiveRecord::Base
 
   # Simple wrapper around private charge!() method that attempts a single
   # charge and returns the gateway response true / false
-  def charge(amount)
+  #
+  # If 'verbose' option is true, the full Charge record is returned
+  def charge(amount, opts = {})
     charge_rec = charge!(amount)
+
+    if opts[:verbose]
+      return charge_rec
+    end
+
     gateway_response = charge_rec.gateway_response
 
     if gateway_response
