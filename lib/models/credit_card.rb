@@ -107,7 +107,9 @@ class CreditCard < ActiveRecord::Base
     if !line_items.empty?
       sum = line_items.inject(0) { |sum, x| sum + x[:amount].to_f }
 
-      if sum != amount
+      # Since we cannot compare float's with certainty, we convert them to
+      # strings
+      if sum.to_s != amount.to_s
         error = "Sum of line item amounts (#{sum}) does not equal charge amount (#{amount})"
         raise SalesReceipt::LineItemSumError.new(error)
       end
