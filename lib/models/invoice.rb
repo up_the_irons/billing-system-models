@@ -4,8 +4,10 @@ class Invoice < ActiveRecord::Base
   has_many :invoices_payments, :dependent => :destroy
   has_many :payments, :through => :invoices_payments, :dependent => :destroy
 
-  named_scope :paid,   :conditions => 'paid = true'
-  named_scope :unpaid, :conditions => 'paid = false'
+  named_scope :paid,     :conditions => 'paid = true  and archived = false'
+  named_scope :unpaid,   :conditions => 'paid = false and archived = false'
+  named_scope :active,   :conditions => 'archived = false'
+  named_scope :archived, :conditions => 'archived = true'
 
   before_create :assign_bill_to
 
