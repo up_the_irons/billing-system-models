@@ -1,1 +1,4 @@
 .rvmrc
+lib/gateway.yml
+lib/gpg.yml
+spec/database.yml
