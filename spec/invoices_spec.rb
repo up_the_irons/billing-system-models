@@ -32,7 +32,7 @@ describe 'Invoices' do
       end
     end
 
-    describe 'invoices_outstanding_balance' do
+    describe 'invoices_outstanding_balance()' do
       describe 'when no invoices' do
         before do
           @my_class.stub!(:invoices_unpaid).and_return(nil)
