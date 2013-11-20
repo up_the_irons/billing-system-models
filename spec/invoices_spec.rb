@@ -15,18 +15,20 @@ describe 'Invoices' do
     end
 
     describe 'invoices_paid()' do
-      it 'should call invoices.paid' do
+      it 'should call invoices.paid.all' do
         @invoices = double(:invoices)
-        @invoices.should_receive(:paid)
+        @paid     = double(:paid, :all => [])
+        @invoices.should_receive(:paid).and_return(@paid)
         @my_class.should_receive(:invoices).and_return(@invoices)
         @my_class.invoices_paid
       end
     end
 
     describe 'invoices_unpaid()' do
-      it 'should call invoices.unpaid' do
+      it 'should call invoices.unpaid.all' do
         @invoices = double(:invoices)
-        @invoices.should_receive(:unpaid)
+        @unpaid   = double(:unpaid, :all => [])
+        @invoices.should_receive(:unpaid).and_return(@unpaid)
         @my_class.should_receive(:invoices).and_return(@invoices)
         @my_class.invoices_unpaid
       end

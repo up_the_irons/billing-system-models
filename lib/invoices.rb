@@ -18,12 +18,12 @@ module BillingSystemModels
         end
       end
 
-      def invoices_paid
-        invoices.paid
+      def invoices_paid(*args)
+        invoices.paid.all(*args)
       end
 
-      def invoices_unpaid
-        invoices.unpaid
+      def invoices_unpaid(*args)
+        invoices.unpaid.all(*args)
       end
 
       def invoices_outstanding_balance
