@@ -150,7 +150,7 @@ class CreditCard < ActiveRecord::Base
         BillingSystemModels::Mailer.deliver_sales_receipt(sr, charge_rec)
       end
 
-      sr
+      return [charge_rec, sr]
     else
       if email_decline_notice
         BillingSystemModels::Mailer.deliver_decline_notice(account)

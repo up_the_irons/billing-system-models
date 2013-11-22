@@ -534,6 +534,15 @@ ENCRYPTED
           @cc.charge_with_sales_receipt(@amount)
         end
 
+        specify "should return sales receipt and charge record" do
+          @li = mock(:line_items, :create => true)
+          @sr = double(:sales_receipt, :line_items => @li)
+          SalesReceipt.stub!(:create).and_return(@sr)
+
+          @cc.charge_with_sales_receipt(@amount).should == \
+            [@charge_rec, @sr]
+        end
+
         context "when email_sales_receipt option is true" do
           before do
             @opts = {
